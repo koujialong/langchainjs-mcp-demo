@@ -29,6 +29,7 @@ const transport = new StdioClientTransport({
   args: ["mcp-server.js"],
 });
 
+
 const client = new Client(
   {
     name: "example-client",
@@ -43,9 +44,11 @@ const client = new Client(
 
 async function main() {
   await client.connect(transport);
+  // await client.connect(transportPG);
   const tools = await client.listTools();
-  console.log("工具集", tools);
-  const mTools = tools.tools.map((tl) =>
+  // const pgTools = await client.listTools();
+  console.log("工具集", tools.tools);
+  const mTools =tools.tools.map((tl) =>
     tool(
       async (toolInput) => {
         const result = await client.callTool({
@@ -65,7 +68,7 @@ async function main() {
   const llmWithTools = llm.bind({
     tools: mTools,
   });
-  const messages = [new HumanMessage("介绍下银川")];
+  const messages = [new HumanMessage("查询下山东省济南市的天气")];
   let response = await llmWithTools.invoke(messages);
   messages.push(response);
 
@@ -90,4 +93,4 @@ async function main() {
   console.log("最终模型回答:", response.content);
 }
 
-main();
+main()
